@@ -1,0 +1,2 @@
+# StarWarsMetadataApi
+StarWars Metadata Api
