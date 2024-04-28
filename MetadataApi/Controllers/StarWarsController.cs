@@ -10,6 +10,13 @@ public class StarWarsController : Controller
 {
     private readonly ILogger<StarWarsController> _logger;
     private readonly IStarWarsService _starWarsService;
+    private static readonly string defaultErrorMessage = "An error occurred while processing your request.";
+    private static ProblemDetails defaultProblemDetails = new ProblemDetails
+    {
+        Status = StatusCodes.Status500InternalServerError,
+        Title = defaultErrorMessage,
+        Detail = defaultErrorMessage
+    };
 
     public StarWarsController(ILogger<StarWarsController> logger, IStarWarsService starWarsService)
     {
@@ -17,11 +24,25 @@ public class StarWarsController : Controller
         _starWarsService = starWarsService;
     }
 
-    [HttpGet(Name = "GetStarWarsInfo")]
+    [HttpGet(Name = "GET Star Wars Types")]
     public async Task<IActionResult> GetAsync()
     {
-        var j = await _starWarsService.GetSingleRequestAsync("people/1");
-        _logger.LogInformation(j.ToString());
-        return Ok(j);
+        return Ok(await _starWarsService.GetAvailableTypesAsync());
+    }
+
+    [HttpGet("{type}/{id}", Name = "GET Star Wars Object")]
+    public async Task<IActionResult> GetAsync(string type, int id)
+    {
+        try
+        {
+            var response = await _starWarsService.GetSingleRequestAsync(type, id);
+            _logger.LogInformation(response.ToString());
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return StatusCode(500, defaultProblemDetails);
+        }
     }
 }

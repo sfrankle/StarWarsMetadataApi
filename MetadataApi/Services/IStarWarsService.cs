@@ -4,6 +4,7 @@ namespace MetadataApi.Services;
 
 public interface IStarWarsService
 {
-    Task<JsonDocument> GetSingleRequestAsync(string path);
+    Task<IEnumerable<string>> GetAvailableTypesAsync();
+    Task<JsonDocument> GetSingleRequestAsync(string type, int id);
     Task<JsonDocument> GetMultiRequestAsync(string path);
 }

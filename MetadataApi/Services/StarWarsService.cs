@@ -1,4 +1,5 @@
 using System.Text.Json;
+using MetadataApi.Utilities;
 
 namespace MetadataApi.Services;
 
@@ -7,35 +8,33 @@ public class StarWarsService : IStarWarsService
 
     private readonly ILogger _logger;
     private readonly HttpClient _httpClient;
-    private static string domain = "https://swapi.dev/api/";
-
     public StarWarsService(ILogger<StarWarsService> logger, HttpClient httpClient)
     {
         _logger = logger;
         _httpClient = httpClient;
     }
 
-    public async Task<JsonDocument> GetSingleRequestAsync(string path)
+    public async Task<IEnumerable<string>> GetAvailableTypesAsync()
     {
-        try
-        {
-            var response = await _httpClient.GetAsync(domain + path);
-            response.EnsureSuccessStatusCode();
+        var response = await _httpClient.GetAsync(UrlUtility.GetDomain());
+        var json = await response.Content.ReadAsStringAsync();
+        var document = JsonDocument.Parse(json);
+        return document.RootElement.EnumerateObject().Select(x => x.Name);
+    }
 
-            var json = await response.Content.ReadAsStringAsync();
-            var j = JsonDocument.Parse(json);
-            return j;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError("something went wrong");
-            _logger.LogError(ex.Message);
-            throw new Exception("custom exception");
-        }
+    public async Task<JsonDocument> GetSingleRequestAsync(string type, int id)
+    {
+        var response = await _httpClient.GetAsync(UrlUtility.GetUrl(type, id));
+        response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonDocument.Parse(json);
     }
 
     public Task<JsonDocument> GetMultiRequestAsync(string path)
     {
         throw new NotImplementedException();
     }
+
+
 }
