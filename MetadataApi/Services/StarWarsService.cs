@@ -1,5 +1,5 @@
-using System.Text.Json;
 using MetadataApi.Utilities;
+using Newtonsoft.Json.Linq;
 
 namespace MetadataApi.Services;
 
@@ -18,23 +18,21 @@ public class StarWarsService : IStarWarsService
     {
         var response = await _httpClient.GetAsync(UrlUtility.GetDomain());
         var json = await response.Content.ReadAsStringAsync();
-        var document = JsonDocument.Parse(json);
-        return document.RootElement.EnumerateObject().Select(x => x.Name);
+        var jObject = JObject.Parse(json);
+        return jObject.Properties().Select(p => p.Name);
     }
 
-    public async Task<JsonDocument> GetSingleRequestAsync(string type, int id)
+    public async Task<JObject> GetSingleRequestAsync(string type, int id)
     {
         var response = await _httpClient.GetAsync(UrlUtility.GetUrl(type, id));
         response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync();
-        return JsonDocument.Parse(json);
+        return JObject.Parse(json);
     }
 
-    public Task<JsonDocument> GetMultiRequestAsync(string path)
+    public Task<JObject> GetMultiRequestAsync(string path)
     {
         throw new NotImplementedException();
     }
-
-
 }

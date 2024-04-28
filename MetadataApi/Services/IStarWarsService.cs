@@ -1,10 +1,10 @@
-using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MetadataApi.Services;
 
 public interface IStarWarsService
 {
     Task<IEnumerable<string>> GetAvailableTypesAsync();
-    Task<JsonDocument> GetSingleRequestAsync(string type, int id);
-    Task<JsonDocument> GetMultiRequestAsync(string path);
+    Task<JObject> GetSingleRequestAsync(string type, int id);
+    Task<JObject> GetMultiRequestAsync(string path);
 }
