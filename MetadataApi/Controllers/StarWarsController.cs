@@ -1,26 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using MetadataApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace MetadataApi.Controllers;
 
+[ApiController]
+[Produces("application/json")]
 [Route("[controller]")]
 public class StarWarsController : Controller
 {
     private readonly ILogger<StarWarsController> _logger;
+    private readonly IStarWarsService _starWarsService;
 
-    public StarWarsController(ILogger<StarWarsController> logger)
+    public StarWarsController(ILogger<StarWarsController> logger, IStarWarsService starWarsService)
     {
         _logger = logger;
+        _starWarsService = starWarsService;
     }
 
     [HttpGet(Name = "GetStarWarsInfo")]
-    public string Get()
+    public async Task<IActionResult> GetAsync()
     {
-        return "I work!";
+        var j = await _starWarsService.GetSingleRequestAsync("people/1");
+        _logger.LogInformation(j.ToString());
+        return Ok(j);
     }
 }
