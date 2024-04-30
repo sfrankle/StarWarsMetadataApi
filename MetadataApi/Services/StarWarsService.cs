@@ -38,13 +38,18 @@ public class StarWarsService : IStarWarsService
             if (allProperties.Contains(propertyKey))
             {
                 var propertyValue = jObject.GetValue(propertyKey);
-                if (propertyValue is JArray)
+                if (propertyValue is null)
+                {
+                    _logger.LogWarning("Property Value requested was not found: {}", propertyKey);
+                    continue;
+                }
+                else if (propertyValue is JArray)
                     await ReplaceListObject(jObject, propertyKey, (JArray)propertyValue);
                 else
                     await ReplaceSingleObject(jObject, propertyKey, propertyValue.ToString());
             }
             else
-                _logger.LogWarning("Property requested was not found: {}", propertyKey);
+                _logger.LogWarning("Property Key requested was not found: {}", propertyKey);
         }
 
         return jObject;
@@ -67,7 +72,7 @@ public class StarWarsService : IStarWarsService
     private async Task ReplaceSingleObject(JObject jObject, string propertyKey, string attributeUrl)
     {
         var property = await GetSingleRequestAsync(attributeUrl);
-        jObject[propertyKey].Replace(property);
+        jObject[propertyKey]!.Replace(property);
     }
 
     private async Task ReplaceListObject(JObject jObject, string propertyKey, JArray propertyValue)
@@ -78,6 +83,6 @@ public class StarWarsService : IStarWarsService
             var property = await GetSingleRequestAsync(attributeUrl.ToString());
             hydratedProperties.Add(property);
         }
-        jObject[propertyKey].Replace(hydratedProperties);
+        jObject[propertyKey]!.Replace(hydratedProperties);
     }
 }
