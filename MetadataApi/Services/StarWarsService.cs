@@ -24,15 +24,39 @@ public class StarWarsService : IStarWarsService
 
     public async Task<JObject> GetSingleRequestAsync(string type, int id)
     {
-        var response = await _httpClient.GetAsync(UrlUtility.GetUrl(type, id));
-        response.EnsureSuccessStatusCode();
-
-        var json = await response.Content.ReadAsStringAsync();
-        return JObject.Parse(json);
+        return await GetSingleRequestAsync(UrlUtility.GetUrl(type, id));
     }
 
-    public async Task<JObject> GetSingleRequestAsync(string url)
+    public async Task<JObject> GetHydratedRequestAsync(string type, int id, HashSet<string> propertiesToReplace)
     {
+        JObject jObject = await GetSingleRequestAsync(type, id);
+
+        var allProperties = jObject.Properties().Select(p => p.Name).ToHashSet();
+
+        foreach (var propertyKey in propertiesToReplace)
+        {
+            if (allProperties.Contains(propertyKey))
+            {
+                var propertyValue = jObject.GetValue(propertyKey);
+                if (propertyValue is JArray)
+                    await ReplaceListObject(jObject, propertyKey, (JArray)propertyValue);
+                else
+                    await ReplaceSingleObject(jObject, propertyKey, propertyValue.ToString());
+            }
+            else
+                _logger.LogWarning("Property requested was not found: {}", propertyKey);
+        }
+
+        return jObject;
+    }
+
+    private async Task<JObject> GetSingleRequestAsync(string url)
+    {
+        if (!UrlUtility.Validate(url))
+        {
+            throw new ArgumentException("Url was not valid");
+        }
+
         var response = await _httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
 
@@ -40,27 +64,20 @@ public class StarWarsService : IStarWarsService
         return JObject.Parse(json);
     }
 
-    public async Task<JObject> GetMultiRequestAsync(string type, int id, IEnumerable<string> attributesToInclude)
+    private async Task ReplaceSingleObject(JObject jObject, string propertyKey, string attributeUrl)
     {
-        JObject jObject = await GetSingleRequestAsync(type, id);
+        var property = await GetSingleRequestAsync(attributeUrl);
+        jObject[propertyKey].Replace(property);
+    }
 
-        var attributes = jObject.Properties().Select(p => p.Name);
-
-        foreach (var attribute in attributesToInclude)
+    private async Task ReplaceListObject(JObject jObject, string propertyKey, JArray propertyValue)
+    {
+        var hydratedProperties = new JArray();
+        foreach (var attributeUrl in propertyValue)
         {
-            if (attributes.Contains(attribute))
-            {
-                var attributePath = jObject.GetValue(attribute).ToString();
-                var attributeObject = await GetSingleRequestAsync(attributePath);
-                _logger.LogInformation(attributeObject.ToString());
-                jObject[attribute].Replace(attributeObject);
-            }
-            else
-            {
-                _logger.LogWarning("Attribute requested that was not found: {}", attribute);
-            }
+            var property = await GetSingleRequestAsync(attributeUrl.ToString());
+            hydratedProperties.Add(property);
         }
-
-        return jObject;
+        jObject[propertyKey].Replace(hydratedProperties);
     }
 }

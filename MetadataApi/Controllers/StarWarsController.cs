@@ -49,11 +49,11 @@ public class StarWarsController : Controller
 
 
     [HttpGet("nested/{type}/{id}", Name = "GET complex Star Wars Object")]
-    public async Task<IActionResult> GetAsync(string type, int id, [FromQuery] IEnumerable<string> attributes)
+    public async Task<IActionResult> GetAsync(string type, int id, [FromQuery] IEnumerable<string> properties)
     {
         try
         {
-            var response = await _starWarsService.GetMultiRequestAsync(type, id, attributes);
+            var response = await _starWarsService.GetHydratedRequestAsync(type, id, properties.ToHashSet());
             _logger.LogInformation(response.ToString());
             return Ok(response);
         }

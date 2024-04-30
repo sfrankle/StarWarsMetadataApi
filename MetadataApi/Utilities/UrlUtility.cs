@@ -9,4 +9,8 @@ public static class UrlUtility
         return new Uri(new Uri(domain), $"{type}/{id}").ToString();
     }
 
+    public static bool Validate(string url)
+    {
+        return Uri.IsWellFormedUriString(url, UriKind.Absolute) && url.StartsWith(domain);
+    }
 }
