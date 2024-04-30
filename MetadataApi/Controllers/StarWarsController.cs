@@ -24,6 +24,7 @@ public class StarWarsController : Controller
         _starWarsService = starWarsService;
     }
 
+    // todo: add rate limiting
     [HttpGet(Name = "GET Star Wars Types")]
     public async Task<IActionResult> GetAsync()
     {
@@ -36,6 +37,23 @@ public class StarWarsController : Controller
         try
         {
             var response = await _starWarsService.GetSingleRequestAsync(type, id);
+            _logger.LogInformation(response.ToString());
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return StatusCode(500, defaultProblemDetails);
+        }
+    }
+
+
+    [HttpGet("nested/{type}/{id}", Name = "GET complex Star Wars Object")]
+    public async Task<IActionResult> GetAsync(string type, int id, [FromQuery] IEnumerable<string> attributes)
+    {
+        try
+        {
+            var response = await _starWarsService.GetMultiRequestAsync(type, id, attributes);
             _logger.LogInformation(response.ToString());
             return Ok(response);
         }
