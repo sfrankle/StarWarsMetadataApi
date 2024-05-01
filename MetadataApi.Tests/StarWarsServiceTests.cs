@@ -26,7 +26,7 @@ public class StarWarsServiceTests
             .Callback<HttpRequestMessage, CancellationToken>((req, _) => Console.WriteLine(req.RequestUri))
             .ReturnsAsync((HttpRequestMessage request, CancellationToken cancellationToken) =>
             {
-                if (request.RequestUri.AbsolutePath.EndsWith("api/people/1"))
+                if (request.RequestUri!.AbsolutePath.EndsWith("api/people/1"))
                     return new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(TestData.GetPeopleOne()) };
                 else if (request.RequestUri.AbsolutePath.EndsWith("api/planets/1"))
                     return new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(TestData.GetPlanetOne()) };

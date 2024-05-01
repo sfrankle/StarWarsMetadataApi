@@ -109,7 +109,7 @@ public class StarWarsControllerTests
     }
 
     [Fact]
-    public async Task GetHydrated_InvalidAttribute_ReturnsOk_WithSingleDataAsync()
+    public async Task GetHydrated_InvalidProperty_ReturnsOk_WithSingleDataAsync()
     {
         // Arrange
         var expected = JObject.Parse(TestData.GetPeopleOne());

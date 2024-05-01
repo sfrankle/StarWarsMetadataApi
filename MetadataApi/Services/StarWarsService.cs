@@ -70,18 +70,18 @@ public class StarWarsService : IStarWarsService
         return JObject.Parse(json);
     }
 
-    private async Task ReplaceSingleObject(JObject jObject, string propertyKey, string attributeUrl)
+    private async Task ReplaceSingleObject(JObject jObject, string propertyKey, string propertyUrl)
     {
-        var property = await GetSingleRequestAsync(attributeUrl);
+        var property = await GetSingleRequestAsync(propertyUrl);
         jObject[propertyKey]!.Replace(property);
     }
 
     private async Task ReplaceListObject(JObject jObject, string propertyKey, JArray propertyValue)
     {
         var hydratedProperties = new JArray();
-        foreach (var attributeUrl in propertyValue)
+        foreach (var propertyUrl in propertyValue)
         {
-            var property = await GetSingleRequestAsync(attributeUrl.ToString());
+            var property = await GetSingleRequestAsync(propertyUrl.ToString());
             hydratedProperties.Add(property);
         }
         jObject[propertyKey]!.Replace(hydratedProperties);

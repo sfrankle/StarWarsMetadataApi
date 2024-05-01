@@ -24,14 +24,22 @@ public class StarWarsController : Controller
         _starWarsService = starWarsService;
     }
 
-    // todo: add rate limiting
-    [HttpGet(Name = "GET Star Wars Types")]
-    public async Task<IActionResult> GetAsync()
+    [HttpGet(Name = "GET StarWars Types")]
+    public async Task<IActionResult> GetTypesAsync()
     {
-        return Ok(await _starWarsService.GetAvailableTypesAsync());
+        try
+        {
+            return Ok(await _starWarsService.GetAvailableTypesAsync());
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return StatusCode(500, defaultProblemDetails);
+        }
+
     }
 
-    [HttpGet("{type}/{id}", Name = "GET Star Wars Object")]
+    [HttpGet("{type}/{id}", Name = "GET one StarWars Object")]
     public async Task<IActionResult> GetAsync(string type, int id)
     {
         try
@@ -47,8 +55,7 @@ public class StarWarsController : Controller
         }
     }
 
-
-    [HttpGet("hydrated/{type}/{id}", Name = "GET complex Star Wars Object")]
+    [HttpGet("hydrated/{type}/{id}", Name = "GET one Star Wars Object hydrateed")]
     public async Task<IActionResult> GetAsync(string type, int id, [FromQuery] IEnumerable<string> properties)
     {
         try
@@ -60,7 +67,7 @@ public class StarWarsController : Controller
         catch (Exception e)
         {
             _logger.LogError(e.ToString());
-            return StatusCode(500, defaultProblemDetails);
+            return StatusCode(StatusCodes.Status500InternalServerError, defaultProblemDetails);
         }
     }
 }
