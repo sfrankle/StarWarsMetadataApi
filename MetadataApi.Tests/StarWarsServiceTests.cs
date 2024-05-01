@@ -114,7 +114,7 @@ public class StarWarsServiceTests
         Func<Task> act = () => _service.GetSingleRequestAsync("invalid", 1);
 
         //Assert
-        var exception = await Assert.ThrowsAsync<HttpRequestException>(act);
+        await Assert.ThrowsAsync<HttpRequestException>(act);
     }
 
     [Fact]

@@ -37,4 +37,11 @@ See Possible Extensions / Error Handling for more.
   - this would convert all links into hydrated objects, except the url property
 
 ## Error Handling
-- 
+**Update to know difference between `NotFound` and `BadRequest`**
+When request to SWAPI returns `HttpRequestException` with details of `NotFound`, check if the incoming requests type.
+
+- If the type is valid (in the list of GET Types), API endpoint return `NotFound` - the type was valid, but there was not a resource found with that id
+- If the type is invalid, the API endpoint returns `BadRequest` with "Invalid Argument" in description
+
+Considerations:
+- We might not want to give the caller too much information. In this case, in testing enviroments we could enable detailed errors.

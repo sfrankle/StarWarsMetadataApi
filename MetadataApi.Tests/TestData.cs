@@ -6,7 +6,10 @@ public static class TestData
     {
         return "{\"people\":\"https://swapi.dev/api/people/\",\"planets\":\"https://swapi.dev/api/planets/\",\"films\":\"https://swapi.dev/api/films/\",\"species\":\"https://swapi.dev/api/species/\",\"vehicles\":\"https://swapi.dev/api/vehicles/\",\"starships\":\"https://swapi.dev/api/starships/\"}";
     }
-
+    public static IEnumerable<string> GetAvailableTypeList()
+    {
+        return new[] { "people", "planets" };
+    }
     public static string GetPeopleOne()
     {
         return @"
@@ -146,7 +149,9 @@ public static class TestData
         }";
     }
 
-    public static string GetPeopleOneHydratedWithVehicles(){ return @"
+    public static string GetPeopleOneHydratedWithVehicles()
+    {
+        return @"
         {
             ""name"": ""Luke Skywalker"",
             ""height"": ""172"",
