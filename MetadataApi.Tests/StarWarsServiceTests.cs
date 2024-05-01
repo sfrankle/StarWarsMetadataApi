@@ -4,14 +4,14 @@ using Newtonsoft.Json.Linq;
 
 namespace MetadataApi.Tests;
 
-public class StarWarsServiceTest
+public class StarWarsServiceTests
 {
     private readonly Mock<ILogger<StarWarsService>> _mockLogger;
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly HttpClient _client;
     private readonly StarWarsService _service;
 
-    public StarWarsServiceTest()
+    public StarWarsServiceTests()
     {
         // Mock ILogger
         _mockLogger = new Mock<ILogger<StarWarsService>>();
