@@ -41,6 +41,7 @@ public class StarWarsService : IStarWarsService
                 if (propertyValue is null)
                 {
                     _logger.LogWarning("Property Value requested was not found: {}", propertyKey);
+                    // todo: consider throwing error
                     continue;
                 }
                 else if (propertyValue is JArray)
