@@ -55,7 +55,7 @@ public class StarWarsController : Controller
         }
     }
 
-    [HttpGet("hydrated/{type}/{id}", Name = "GET one Star Wars Object hydrateed")]
+    [HttpGet("hydrated/{type}/{id}", Name = "GET one Star Wars Object hydrated")]
     public async Task<IActionResult> GetAsync(string type, int id, [FromQuery] IEnumerable<string> properties)
     {
         try

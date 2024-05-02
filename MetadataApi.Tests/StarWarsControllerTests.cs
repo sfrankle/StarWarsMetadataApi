@@ -63,7 +63,7 @@ public class StarWarsControllerTests
     }
 
     [Fact]
-    public async Task GetSingle_InvalidType_Returns_Exception()
+    public async Task GetSingle_InvalidType_Returns_ExceptionAsync()
     {
         // Arrange
         _mockService.Setup(s => s.GetSingleRequestAsync("invalid", 1)).Throws(new HttpRequestException());
@@ -122,5 +122,19 @@ public class StarWarsControllerTests
         var result = Assert.IsType<OkObjectResult>(response);
         var actual = Assert.IsType<JObject>(result.Value);
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetHydratedList_InavlidObject_Returns_ExceptionAsync()
+    {
+        // Arrange
+        _mockService.Setup(s => s.GetHydratedRequestAsync("invalid", 1, new() { "vehicles" })).Throws(new HttpRequestException());
+
+        // Act
+        var response = await _controller.GetAsync("people", 1, ["vehicles"]);
+
+        // Assert
+        var result = Assert.IsType<ObjectResult>(response);
+        Assert.Equal(StatusCodes.Status500InternalServerError, result.StatusCode);
     }
 }

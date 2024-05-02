@@ -13,10 +13,8 @@ public class StarWarsServiceTests
 
     public StarWarsServiceTests()
     {
-        // Mock ILogger
         _mockLogger = new Mock<ILogger<StarWarsService>>();
 
-        // Setup HttpClient with a Mock Handler
         _handlerMock = new Mock<HttpMessageHandler>();
         _handlerMock.Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -42,12 +40,8 @@ public class StarWarsServiceTests
                     return new HttpResponseMessage { StatusCode = HttpStatusCode.NotFound };
             });
 
-        _client = new HttpClient(_handlerMock.Object)
-        {
-            BaseAddress = new Uri("http://example.com")  // Use the base address if necessary
-        };
+        _client = new HttpClient(_handlerMock.Object) { };
 
-        // Initialize the service with the mocked logger and HttpClient
         _service = new StarWarsService(_mockLogger.Object, _client);
     }
 

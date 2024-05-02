@@ -6,8 +6,6 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 var myOptions = new CustomRateLimitOptions();
@@ -55,7 +53,6 @@ var app = builder.Build();
 
 app.UseRateLimiter();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

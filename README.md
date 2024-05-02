@@ -66,3 +66,15 @@ Considerations:
 #### Update to use IExceptionHandler
 
 Add a `GlobalExceptionHandler`. This could check the environment, check if the type is valid, etc.
+
+#### Throw exception on unavailable requested properties
+When hydrating the object, if a requested property to hydrate does not exist, the service logs a warning and skips the property. 
+
+An alternative would be to throw an invalid argument exception.
+
+#### Use "Railway oriented programming"
+
+A possible enhancement could be to implement using `Result<TSuccess, TFailure>` as return / response types.
+
+This add explicit error handling and informs the caller what types of errors to expect.
+It adds readability and predicatability to the code.
